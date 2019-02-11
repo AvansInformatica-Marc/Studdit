@@ -1,6 +1,6 @@
 {
   "name": "studdit",
-  "version": "0.1.r0",
+  "version": "0.1.0",
   "description": "",
   "main": "build/main/index.js",
   "types": "build/main/index.d.ts",
