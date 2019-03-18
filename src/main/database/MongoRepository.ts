@@ -1,35 +1,42 @@
-import mongoose from 'mongoose'
-import { MongoDB } from "./MongoDB";
-import { Repository } from "./Repository"
-import { Entity } from './Entity';
-import { MongoID } from './MongoID';
+import mongoose from "mongoose"
 
-type json = {[key: string]: any}
+import { Entity } from "./entity"
+import { MongoDB } from "./mongoDB"
+import { MongoID } from "./mongoID"
+import { IRepository } from "./repository"
 
-export class MongoRepository<T> implements Repository<T, MongoID> {
-    protected mongoRepo: mongoose.Model<T & mongoose.Document, {}>
+interface IJson {
+    [key: string]: any
+}
 
-    constructor(public collectionName: string, schema: json){
-        this.mongoRepo = mongoose.model(collectionName, MongoDB.schemaOf(schema), collectionName) as mongoose.Model<T & mongoose.Document, {}>
-    }
+export class MongoRepository<T> implements IRepository<T, MongoID> {
+    protected mongoRepo: mongoose.Model<T & mongoose.Document>
 
-    public async getById(id: MongoID): Promise<Entity<T> | null> {
-        return await this.mongoRepo.findById(id)
-    }
-
-    public async getAll(): Promise<Entity<T>[]> {
-        return await this.mongoRepo.find()
+    public constructor(public collectionName: string, schema: IJson) {
+        this.mongoRepo = mongoose.model(
+            collectionName,
+            MongoDB.schemaOf(schema),
+            collectionName,
+        )
     }
 
     public async create(model: T): Promise<Entity<T>> {
-        return await this.mongoRepo.create(model)
-    }
-
-    public async update(id: MongoID, model: T): Promise<Entity<T> | null> {
-        return await this.mongoRepo.findByIdAndUpdate(id, model)
+        return this.mongoRepo.create(model)
     }
 
     public async delete(id: MongoID): Promise<Entity<T> | null> {
-        return await this.mongoRepo.findByIdAndDelete(id)
+        return this.mongoRepo.findByIdAndDelete(id)
+    }
+
+    public async getAll(): Promise<Array<Entity<T>>> {
+        return this.mongoRepo.find()
+    }
+
+    public async getById(id: MongoID): Promise<Entity<T> | null> {
+        return this.mongoRepo.findById(id)
+    }
+
+    public async update(id: MongoID, model: T): Promise<Entity<T> | null> {
+        return this.mongoRepo.findByIdAndUpdate(id, model)
     }
 }

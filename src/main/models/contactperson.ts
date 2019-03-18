@@ -1,8 +1,8 @@
-export interface ContactPerson {
-    id: number
+export interface IContactPerson {
+    customerId: number
     email: string
+    id: number
+    labelId: number
     name: string
     phoneNumber: string
-    customerId: number
-    labelId: number
 }

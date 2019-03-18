@@ -1,0 +1,28 @@
+{
+    "defaultSeverity": "warn",
+    "extends": [
+        "tslint:all"
+    ],
+    "jsRules": {},
+    "rules": {
+        "linebreak-style": [
+            true,
+            "CRLF"
+        ],
+        "object-literal-sort-keys": false,
+        "strict-boolean-expressions": false,
+        "no-magic-numbers": false,
+        "semicolon": [
+            true,
+            "never"
+        ],
+        "eofline": false,
+        "typedef": false,
+        "completed-docs": false,
+        "no-console": false,
+        "no-parameter-properties": false,
+        "arrow-parens": false,
+        "radix": false
+    },
+    "rulesDirectory": []
+}

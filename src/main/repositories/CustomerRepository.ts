@@ -1,22 +1,26 @@
-import { MongoRepository } from "../database/MongoRepository";
-import { MongoDB } from "../database/MongoDB";
+import { MongoDB } from "../database/mongoDB"
+import { MongoRepository } from "../database/mongoRepository"
 
-const types = MongoDB.Types
+const types = MongoDB.TYPES
 
-export type AdditionalCustomerData = { customerId: number, slack?: string }
+export interface IAdditionalCustomerData {
+    customerId: number
+    slack?: string
+}
 
-export class CustomerRepository extends MongoRepository<AdditionalCustomerData> {
-    constructor(){
+export class CustomerRepository extends MongoRepository<IAdditionalCustomerData> {
+    public constructor() {
         super("customers", {
             customerId: {
                 type: types.Number,
                 unique: true,
-                required: true
-            }, slack: {
+                required: true,
+            },
+            slack: {
                 type: types.String,
                 unique: false,
-                required: false
-            }
+                required: false,
+            },
         })
     }
 }

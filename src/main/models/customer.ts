@@ -1,11 +1,11 @@
-export interface Customer {
-    id: number
+export interface ICustomer {
+    contactPersonIds: number[]
+    dealIds: number[]
     email: string
+    id: number
+    invoiceIds: number[]
+    labelId: number
     name: string
     phoneNumber: string
-    contactPersonIds: number[]
-    labelId: number
-    dealIds: number[]
-    invoiceIds: number[]
     slack?: string
 }

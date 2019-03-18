@@ -1,4 +1,4 @@
-import { MongoDB } from "./database/MongoDB";
+import { MongoDB } from "./database/mongoDB"
 
 const isProduction = !!process.env.PORT
 
@@ -8,8 +8,8 @@ export const env = {
     db: {
         name: process.env.DB_NAME || "hpa",
         host: process.env.DB_HOST || "localhost",
-        port: isProduction ? process.env.DB_PORT : MongoDB.DefaultPort,
+        port: isProduction ? process.env.DB_PORT : MongoDB.DEFAULT_PORT,
         user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD
-    }
+        password: process.env.DB_PASSWORD,
+    },
 }

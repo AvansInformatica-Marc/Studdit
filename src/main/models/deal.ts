@@ -1,11 +1,11 @@
-export interface Deal {
+export interface IDeal {
+    customerId: number
+    deadline: string
+    employeeIds: number[]
     id: number
+    isOpen?: boolean
+    labelId: number
+    percentage: number
     title: string
     value: number
-    deadline: string
-    percentage: number
-    customerId: number
-    employeeIds: number[]
-    labelId: number
-    isOpen?: boolean
 }

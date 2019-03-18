@@ -1,9 +1,9 @@
-import { Entity } from "./Entity";
+import { Entity } from "./entity"
 
-export interface Repository<T, ID = string> {
-    getById(id: ID): Promise<Entity<T> | null>
-    getAll(): Promise<Entity<T>[]>
+export interface IRepository<T, ID = string> {
     create(model: T): Promise<Entity<T>>
-    update(id: ID, model: T): Promise<Entity<T> | null> 
-    delete(id: ID): Promise<Entity<T> | null> 
+    delete(id: ID): Promise<Entity<T> | null>
+    getAll(): Promise<Array<Entity<T>>>
+    getById(id: ID): Promise<Entity<T> | null>
+    update(id: ID, model: T): Promise<Entity<T> | null>
 }
