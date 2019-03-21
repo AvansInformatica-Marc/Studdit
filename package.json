@@ -2,7 +2,7 @@
   "name": "studdit",
   "version": "0.1.0",
   "description": "",
-  "main": "build/main/index.js",
+  "main": "app.js",
   "types": "build/main/index.d.ts",
   "private": true,
   "scripts": {

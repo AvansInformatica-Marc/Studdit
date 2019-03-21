@@ -4,7 +4,7 @@ const isProduction = !!process.env.PORT
 
 export const env = {
     production: isProduction,
-    port: process.env.PORT || 8080,
+    port: process.env.PORT || undefined,
     db: {
         name: process.env.DB_NAME || "hpa",
         host: process.env.DB_HOST || "localhost",
