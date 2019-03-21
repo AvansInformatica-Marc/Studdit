@@ -1,25 +1,22 @@
 import { Server } from "@peregrine/webserver"
 
 import { env } from "./config"
-import { ContactPersonController } from "./controllers/contactPersonController"
-import { CustomerController } from "./controllers/customerController"
-import { DealController } from "./controllers/dealController"
+import { PostController } from "./controllers/postController"
 import { MongoDB } from "./database/mongoDB"
-import { CustomerRepository } from "./repositories/customerRepository"
-
-const startServer = async () => {
-    const server = new Server()
-    server.addController("/api/v1/", new DealController())
-    server.addController("/api/v1/", new ContactPersonController())
-    server.addController("/api/v1/", new CustomerController(new CustomerRepository()))
-
-    return server.startWithoutSecurity(env.port)
-}
+import { MongoDBInstance } from "./database/mongoDBInstance"
+import { PostRepository } from "./repositories/postRepository"
 
 const startDatabase = async () => {
     const db = new MongoDB(env.db.name)
 
-    return db.connect(env.db.host, env.db.port || null, env.db.user, env.db.password)
+    return db.connect(env.db.host, env.db.port || null, "DEFAULT", env.db.user, env.db.password)
+}
+
+const startServer = async (dbConnection: MongoDBInstance) => {
+    const server = new Server()
+    server.addController("/api/v1/", new PostController(new PostRepository(dbConnection)))
+
+    return server.startWithoutSecurity(env.port)
 }
 
 // Run the app
@@ -27,7 +24,7 @@ const main = async () => {
     const dbConnection = await startDatabase()
     console.log(`Connected to MongoDB on ${dbConnection.connectionString}`)
 
-    const connectionInfo = await startServer()
+    const connectionInfo = await startServer(dbConnection)
     console.log(`Server is running on http://localhost:${connectionInfo.port}/`)
 }
 

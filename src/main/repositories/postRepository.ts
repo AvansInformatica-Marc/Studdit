@@ -1,17 +1,14 @@
 import { MongoDB } from "../database/mongoDB"
+import { MongoDBInstance } from "../database/mongoDBInstance"
 import { MongoRepository } from "../database/mongoRepository"
+import { IPost } from "../models/post"
 
 const types = MongoDB.TYPES
 
-export interface IAdditionalCustomerData {
-    customerId: number
-    slack?: string
-}
-
-export class CustomerRepository extends MongoRepository<IAdditionalCustomerData> {
-    public constructor() {
-        super("customers", {
-            customerId: {
+export class PostRepository extends MongoRepository<IPost> {
+    public constructor(instance?: MongoDBInstance) {
+        super("posts", {
+            /* customerId: {
                 type: types.Number,
                 unique: true,
                 required: true,
@@ -20,7 +17,7 @@ export class CustomerRepository extends MongoRepository<IAdditionalCustomerData>
                 type: types.String,
                 unique: false,
                 required: false,
-            },
-        })
+            }, */
+        }, instance)
     }
 }

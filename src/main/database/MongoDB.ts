@@ -18,39 +18,36 @@ export class MongoDB {
     public async connect(
         host: string = "localhost",
         port: number | string | null = MongoDB.DEFAULT_PORT,
+        protocol: "DEFAULT" | "SRV" = "DEFAULT",
         user?: string,
         password?: string,
+        retryWrites?: boolean,
     ): Promise<MongoDBInstance> {
-        let connectionString = ""
-        connectionString += host === "localhost" ? "mongodb://" : "mongodb+srv://"
-        if (user && password) {
-            connectionString += `${user}:${password}@`
-        }
-        connectionString += host
-        if (port) {
-            connectionString += `:${port}`
-        }
+        const connectionProtocol = protocol === "DEFAULT" ? "mongodb" : "mongodb+srv"
+        const credentials = user && password ? `${user}:${password}@` : ""
+        const connectionPort = port ? `:${port}` : ""
 
-        return this.connectWithConnectionString(connectionString)
+        return this.connectWithConnectionString(
+            `${connectionProtocol}://${credentials}${host}${connectionPort}`, retryWrites)
     }
 
     public async connectWithConnectionString(
         connectionString: string,
         retryWrites: boolean = false,
     ): Promise<MongoDBInstance> {
-        connectionString += "/" + this.dbName + (retryWrites ? "?retryWrites=true" : "")
+        const connectionUri = `${connectionString}/${this.dbName}${retryWrites ? "?retryWrites=true" : ""}`
 
         return new Promise(async (resolve, reject) => {
-            await mongoose.connect(connectionString, {
+            const mongoConnection = await mongoose.connect(connectionUri, {
                 useCreateIndex: true,
                 useNewUrlParser: true,
             })
 
-            const instance = new MongoDB.INSTANCE(mongoose.connection, connectionString)
+            const instance = new MongoDB.INSTANCE(mongoConnection.connection, connectionUri)
 
             instance.connection
-                .once("open", () => resolve(instance))
-                .on("error", (error: Error) => reject(error))
+                .once("open", () => { resolve(instance) })
+                .on("error", reject)
         })
     }
 }

@@ -6,4 +6,5 @@ export interface IRepository<T, ID = string> {
     getAll(): Promise<Array<Entity<T>>>
     getById(id: ID): Promise<Entity<T> | null>
     update(id: ID, model: T): Promise<Entity<T> | null>
+    /* update(entity: Entity<T>): Promise<Entity<T> | null> */
 }
