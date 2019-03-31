@@ -20,17 +20,17 @@
     "@peregrine/webserver": "^0.2.7",
     "axios": "^0.18.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.19"
+    "mongoose": "^5.4.20"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/dotenv": "^6.1.0",
+    "@types/dotenv": "^6.1.1",
     "@types/mocha": "^5.2.6",
-    "@types/mongoose": "^5.3.22",
-    "@types/node": "^11.11.3",
+    "@types/mongoose": "^5.3.24",
+    "@types/node": "^11.12.2",
     "chai": "^4.2.0",
     "mocha": "^6.0.2",
     "tslint": "^5.14.0",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.4.1"
   }
 }

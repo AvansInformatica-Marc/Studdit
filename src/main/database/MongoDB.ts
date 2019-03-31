@@ -9,7 +9,7 @@ export class MongoDB {
     public static INSTANCE = MongoDBInstance
     public static TYPES = mongoose.SchemaTypes
 
-    public static schemaOf(json: {[name: string]: any}): mongoose.Schema {
+    public static schemaOf(json: mongoose.SchemaDefinition): mongoose.Schema {
         return new mongoose.Schema(json, { versionKey: false })
     }
 
@@ -24,8 +24,8 @@ export class MongoDB {
         retryWrites?: boolean,
     ): Promise<MongoDBInstance> {
         const connectionProtocol = protocol === "DEFAULT" ? "mongodb" : "mongodb+srv"
-        const credentials = user && password ? `${user}:${password}@` : ""
-        const connectionPort = port ? `:${port}` : ""
+        const credentials = user !== undefined && password !== undefined ? `${user}:${password}@` : ""
+        const connectionPort = port !== null ? `:${port}` : ""
 
         return this.connectWithConnectionString(
             `${connectionProtocol}://${credentials}${host}${connectionPort}`, retryWrites)

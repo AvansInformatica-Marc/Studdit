@@ -1,28 +1,19 @@
 import mongoose from "mongoose"
 
 import { Entity } from "./entity"
-import { MongoDB } from "./mongoDB"
 import { MongoDBInstance } from "./mongoDBInstance"
 import { MongoID } from "./mongoID"
 import { IRepository } from "./repository"
 
-interface IJson {
-    [key: string]: any
-}
-
-interface IModelCreator {
-    model<T extends mongoose.Document>(name: string, schema?: mongoose.Schema, collection?: string): mongoose.Model<T>
-}
-
 export class MongoRepository<T> implements IRepository<T, MongoID> {
     protected mongoRepo: mongoose.Model<T & mongoose.Document>
 
-    public constructor(public collectionName: string, schema: IJson, instance?: MongoDBInstance) {
-        this.mongoRepo = ((instance ? instance.connection : mongoose) as IModelCreator).model(
-            collectionName,
-            MongoDB.schemaOf(schema),
-            collectionName,
-        )
+    public constructor(
+        public collectionName: string,
+        schema: mongoose.SchemaDefinition,
+        instance: MongoDBInstance = new MongoDBInstance(mongoose.connection, ""),
+    ) {
+        this.mongoRepo = instance.model(collectionName, schema)
     }
 
     public async create(model: T): Promise<Entity<T>> {
