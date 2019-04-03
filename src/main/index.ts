@@ -2,10 +2,12 @@ import { File } from "@peregrine/filesystem"
 import { Server } from "@peregrine/webserver"
 
 import { env } from "./config"
-import { PostController } from "./controllers/postController"
+import { CommentController } from "./controllers/commentController"
+import { ThreadController } from "./controllers/threadController"
 import { MongoDB } from "./database/mongoDB"
 import { MongoDBInstance } from "./database/mongoDBInstance"
-import { PostRepository } from "./repositories/postRepository"
+import { CommentRepository } from "./repositories/commentRepository"
+import { ThreadRepository } from "./repositories/threadRepository"
 
 const startDatabase = async () => {
     const db = new MongoDB(env.db.name)
@@ -15,9 +17,12 @@ const startDatabase = async () => {
 
 const startServer = async (dbConnection: MongoDBInstance) => {
     const server = new Server()
-    server.addController("/api/v1/", new PostController(new PostRepository(dbConnection)))
+    server.addController("/api/v1/", new ThreadController(new ThreadRepository(dbConnection)))
+    server.addController("/api/v1/", new CommentController(new CommentRepository(dbConnection)))
 
-    return server.start(new File("assets/localhost.key"), new File("assets/localhost.crt"), env.port)
+    return env.production ?
+        server.startWithoutSecurity(env.port) :
+        server.start(new File("assets/localhost.key"), new File("assets/localhost.crt"), env.port)
 }
 
 // Run the app

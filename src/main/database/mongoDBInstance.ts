@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
 
 import { MongoDB } from "./mongoDB"
-import { MongoRepository } from "./mongoRepository";
+import { MongoRepository } from "./mongoRepository"
 
 export class MongoDBInstance {
     public constructor(public readonly connection: mongoose.Connection, public readonly connectionString: string) {}

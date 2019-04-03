@@ -8,7 +8,7 @@ export const env = {
     db: {
         name: process.env.DB_NAME || "studdit",
         host: process.env.DB_HOST || "localhost",
-        protocol: isProduction ? "SRV" as "SRV" : "DEFAULT" as "DEFAULT",
+        protocol: (isProduction ? "SRV" : "DEFAULT") as "SRV" | "DEFAULT",
         port: isProduction ? process.env.DB_PORT || null : MongoDB.DEFAULT_PORT,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
