@@ -5,7 +5,7 @@ import { IRepository } from "../repository"
 
 import { MongoDB } from "./mongoDB"
 
-export class MongoRepository<T> implements IRepository<T> {
+export class MongoRepository<T extends object> implements IRepository<T> {
     protected static throwNotFoundIfNull<P>(model: P | null): P {
         if (model === null) {
             throw new Error("Not Found")
@@ -66,6 +66,12 @@ export class MongoRepository<T> implements IRepository<T> {
             m[this.obj.__pk__] = (m[this.obj.__pk__] as Types.ObjectId).toHexString()
         }
 
-        return m as T
+        const newModel = Object.create(this.entityType.prototype) as JsonObject
+        for (const i of Object.keys(m)) {
+            newModel[i] = m[i]
+        }
+
+        return newModel as T
+        // Old: return Object.setPrototypeOf(m, this.entityType.prototype) as T
     }
 }
