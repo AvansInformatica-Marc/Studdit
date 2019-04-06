@@ -1,24 +1,29 @@
-import { Body, CreateItem, Json, Resource } from "@peregrine/webserver"
+import { Body, CreateItem, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
-import { IComment } from "../models/comment"
+import { Comment } from "../models/comment"
 
 import { HttpAsyncReponse } from "./httpResponse"
 
 @Resource("comments")
 export class CommentController {
-    protected static isComment(object: string | Json | null | undefined): object is IComment {
-        return (object !== null && typeof object === "object" && !Array.isArray(object) &&
-            object.content && object.parentId && object.userId) as boolean
-    }
-
-    public constructor(protected commentRepository: IRepository<IComment>) {}
+    public constructor(protected commentRepository: IRepository<Comment>) {}
 
     @CreateItem()
-    public async createComment(@Body() comment: string | Json | null | undefined): HttpAsyncReponse<null> {
-        if (CommentController.isComment(comment)) {
-            await this.commentRepository.create(comment)
+    public async createComment(@Body() body: unknown): HttpAsyncReponse<null> {
+        let comment
+        try {
+            comment = new Comment(body)
+        } catch (error) {
+            return {
+                code: 400,
+                body: {
+                    errorName: "Bad Request",
+                },
+            }
         }
+
+        await this.commentRepository.create(comment)
 
         return null
     }

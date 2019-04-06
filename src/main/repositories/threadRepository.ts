@@ -1,28 +1,10 @@
-import { MongoDB } from "../database/mongoDB"
-import { MongoDBInstance } from "../database/mongoDBInstance"
-import { MongoRepository } from "../database/mongoRepository"
-import { IThread } from "../models/thread"
+import { MongoDB } from "../database/mongoDB/mongoDB"
+import { MongoRepository } from "../database/mongoDB/mongoRepository"
+import { IRepository } from "../database/repository"
+import { Thread } from "../models/thread"
 
-const types = MongoDB.TYPES
-
-export class ThreadRepository extends MongoRepository<IThread> {
-    public constructor(instance?: MongoDBInstance) {
-        super("threads", {
-            userId: {
-                type: types.ObjectId,
-                unique: false,
-                required: true,
-            },
-            title: {
-                type: types.String,
-                unique: false,
-                required: true,
-            },
-            content: {
-                type: types.String,
-                unique: false,
-                required: true,
-            },
-        }, instance)
+export class ThreadRepository extends MongoRepository<Thread> implements IRepository<Thread> {
+    public constructor(instance: MongoDB) {
+        super(Thread, instance)
     }
 }

@@ -1,10 +1,31 @@
-import { MongoID } from "../database/mongoID"
+import { JsonObject } from "@peregrine/webserver"
 
-import { IComment } from "./comment"
+import { Entity, Field, ID, Required } from "../database/mongoDB/mongoORMfunctions"
 
-export interface IThread {
-    children?: IComment[]
-    content: string
-    title: string
-    userId: MongoID
+const isJson = (thing: unknown): thing is JsonObject =>
+    thing !== null && typeof thing === "object" && !Array.isArray(thing)
+
+@Entity("thread")
+export class Thread {
+    @ID()
+    public _id?: string
+
+    @Field(String) @Required()
+    public content: string
+
+    @Field(String) @Required()
+    public title: string
+
+    @ID() @Required()
+    public userId: string
+
+    public constructor(object: unknown) {
+        if (isJson(object) && object.content && object.title && object.userId) {
+            this.content = object.content
+            this.title = object.title
+            this.userId = object.userId
+        } else {
+            throw new Error()
+        }
+    }
 }

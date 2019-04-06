@@ -1,28 +1,10 @@
-import { MongoDB } from "../database/mongoDB"
-import { MongoDBInstance } from "../database/mongoDBInstance"
-import { MongoRepository } from "../database/mongoRepository"
-import { IComment } from "../models/comment"
+import { MongoDB } from "../database/mongoDB/mongoDB"
+import { MongoRepository } from "../database/mongoDB/mongoRepository"
+import { IRepository } from "../database/repository"
+import { Comment } from "../models/comment"
 
-const types = MongoDB.TYPES
-
-export class CommentRepository extends MongoRepository<IComment> {
-    public constructor(instance?: MongoDBInstance) {
-        super("comments", {
-            parentId: {
-                type: types.ObjectId,
-                unique: false,
-                required: true,
-            },
-            userId: {
-                type: types.ObjectId,
-                unique: false,
-                required: true,
-            },
-            content: {
-                type: types.String,
-                unique: false,
-                required: true,
-            },
-        }, instance)
+export class CommentRepository extends MongoRepository<Comment> implements IRepository<Comment> {
+    public constructor(instance: MongoDB) {
+        super(Comment, instance)
     }
 }
