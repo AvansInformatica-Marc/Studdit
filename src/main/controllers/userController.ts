@@ -3,7 +3,7 @@ import { Auth, Body, CreateItem, DeleteItem, ID, Resource } from "@peregrine/web
 import { IRepository } from "../database/repository"
 import { User } from "../models/user"
 
-@Resource("user")
+@Resource("users")
 export class UserController {
     public constructor(protected readonly userRepository: IRepository<User>) {}
 
