@@ -1,4 +1,4 @@
-import { Body, CreateItem, DeleteItem, Resource, ID, Auth } from "@peregrine/webserver"
+import { Auth, Body, CreateItem, DeleteItem, ID, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
 import { Comment } from "../models/comment"
@@ -9,7 +9,7 @@ export class CommentController {
     public constructor(protected commentRepository: IRepository<Comment>) {}
 
     @CreateItem()
-    public async createComment(@Body() body: unknown, @Auth() user: null | User): Promise<object> {
+    public async createComment(@Body() body: unknown, @Auth() user: null | User): Promise<Comment> {
         if (user === null) {
             throw {
                 code: 401,
@@ -32,9 +32,7 @@ export class CommentController {
             }
         }
 
-        await this.commentRepository.create(comment)
-
-        return {}
+        return this.commentRepository.create(comment)
     }
 
     @DeleteItem()

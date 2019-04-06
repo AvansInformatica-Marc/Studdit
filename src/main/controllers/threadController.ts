@@ -43,7 +43,7 @@ export class ThreadController {
     }
 
     @CreateItem()
-    public async createThread(@Body() body: unknown, @Auth() user: null | User): Promise<object> {
+    public async createThread(@Body() body: unknown, @Auth() user: null | User): Promise<Thread> {
         if (user === null) {
             throw {
                 code: 401,
@@ -65,8 +65,6 @@ export class ThreadController {
             }
         }
 
-        await this.threadRepository.create(thread)
-
-        return {}
+        return this.threadRepository.create(thread)
     }
 }
