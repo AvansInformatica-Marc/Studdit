@@ -28,4 +28,13 @@ export class Comment {
             throw new Error()
         }
     }
+
+    public toJSON(): JsonObject {
+        return {
+            _id: this._id,
+            content: this.content,
+            parentId: this.parentId,
+            userId: this.userId,
+        }
+    }
 }

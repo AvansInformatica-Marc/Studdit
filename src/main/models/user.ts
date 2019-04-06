@@ -25,4 +25,12 @@ export class User {
             throw new Error()
         }
     }
+
+    public toJSON(): JsonObject {
+        return {
+            _id: this._id,
+            username: this.username,
+            password: this.password,
+        }
+    }
 }

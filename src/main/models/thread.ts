@@ -28,4 +28,13 @@ export class Thread {
             throw new Error()
         }
     }
+
+    public toJSON(): JsonObject {
+        return {
+            _id: this._id,
+            content: this.content,
+            title: this.title,
+            userId: this.userId,
+        }
+    }
 }
