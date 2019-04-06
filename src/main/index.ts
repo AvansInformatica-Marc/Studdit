@@ -4,8 +4,10 @@ import { Server } from "@peregrine/webserver"
 import { CommentController } from "./controllers/commentController"
 import { ThreadController } from "./controllers/threadController"
 import { MongoDB } from "./database/mongoDB/mongoDB"
-import { CommentRepository } from "./repositories/commentRepository"
-import { ThreadRepository } from "./repositories/threadRepository"
+import { MongoRepository } from "./database/mongoDB/mongoRepository"
+import { Comment } from "./models/comment"
+import { Thread } from "./models/thread"
+import { User } from "./models/user"
 
 const isProduction = process.env.PORT !== undefined
 
@@ -21,10 +23,26 @@ const startDatabase = async (): Promise<MongoDB> => {
 }
 
 const startServer = async (dbConnection: MongoDB) => {
+    const commentRepository = new MongoRepository(Comment, dbConnection)
+    const threadRepository = new MongoRepository(Thread, dbConnection)
+    const userRepository = new MongoRepository(User, dbConnection)
+
     const server = new Server()
-    const commentRepository = new CommentRepository(dbConnection)
-    server.addController("/api/v1/", new ThreadController(new ThreadRepository(dbConnection), commentRepository))
-    server.addController("/api/v1/", new CommentController(commentRepository))
+    const apiEndpoint = server.route("/api/v1/")
+    apiEndpoint.addAuthenticationMiddleware(async request => {
+        if (request.headers.username === undefined) {
+            return null
+        }
+
+        const user = await userRepository.getById(request.headers.username as string)
+        if (user.password !== request.headers.password) {
+            return null
+        }
+
+        return user
+    })
+    apiEndpoint.addController(new ThreadController(threadRepository, commentRepository))
+    apiEndpoint.addController(new CommentController(commentRepository))
 
     return isProduction ?
         server.startWithoutSecurity(process.env.PORT) :

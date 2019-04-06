@@ -10,14 +10,14 @@ export class MongoDB {
     public static async connect(dbName: string, conString: string, retryWrites: boolean = false): Promise<MongoDB> {
         const connectionUri = `${conString}/${dbName}?retryWrites=${retryWrites}`
 
-        return new Promise(async (resolve, reject) => {
-            const mongoConnection = await mongoose.connect(connectionUri, {
-                useCreateIndex: true,
-                useNewUrlParser: true,
-            })
+        const mongoConnection = mongoose.createConnection(connectionUri, {
+            useCreateIndex: true,
+            useNewUrlParser: true,
+        })
 
-            mongoConnection.connection
-                .once("open", () => { resolve(new MongoDB(mongoConnection.connection, connectionUri, dbName)) })
+        return new Promise((resolve, reject) => {
+            mongoConnection
+                .once("open", () => { resolve(new MongoDB(mongoConnection, connectionUri, dbName)) })
                 .on("error", reject)
         })
     }

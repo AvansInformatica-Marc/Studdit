@@ -19,11 +19,11 @@ export class Comment {
     @ID() @Required()
     public userId: string
 
-    public constructor(object: unknown) {
+    public constructor(object: unknown, customUserId?: string) {
         if (isJson(object) && object.content && object.parentId && object.userId) {
             this.content = object.content
             this.parentId = object.parentId
-            this.userId = object.userId
+            this.userId = customUserId !== undefined ? customUserId : object.userId
         } else {
             throw new Error()
         }

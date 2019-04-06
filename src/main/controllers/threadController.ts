@@ -1,10 +1,9 @@
-import { GetAll, GetItem, ID, JsonObject, Resource } from "@peregrine/webserver"
+import { Auth, Body, CreateItem, GetAll, GetItem, ID, JsonObject, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
 import { Comment } from "../models/comment"
 import { Thread } from "../models/thread"
-
-import { HttpAsyncReponse } from "./httpResponse"
+import { User } from "../models/user"
 
 @Resource("threads")
 export class ThreadController {
@@ -26,20 +25,48 @@ export class ThreadController {
     ) {}
 
     @GetAll()
-    public async getAll(): HttpAsyncReponse<Thread[]> {
+    public async getAll(): Promise<Thread[]> {
         return this.threadRepository.getAll()
     }
 
     @GetItem()
-    public async getItem(@ID() id: string): HttpAsyncReponse<Thread> {
+    public async getItem(@ID() id: string): Promise<Thread> {
         let thread
         try {
             thread = await this.threadRepository.getById(id)
         } catch (error) {
-            return { code: 422 }
+            throw { code: 422 }
         }
         (thread as JsonObject).children = ThreadController.getNestedComments(id, await this.commentRepository.getAll())
 
         return thread
+    }
+
+    @CreateItem()
+    public async createThread(@Body() body: unknown, @Auth() user: null | User): Promise<object> {
+        if (user === null) {
+            throw {
+                code: 401,
+                body: {
+                    errorName: "Unauthorised",
+                },
+            }
+        }
+
+        let thread
+        try {
+            thread = new Thread(body, user._id)
+        } catch (error) {
+            throw {
+                code: 400,
+                body: {
+                    errorName: "Bad Request",
+                },
+            }
+        }
+
+        await this.threadRepository.create(thread)
+
+        return {}
     }
 }
