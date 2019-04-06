@@ -1,8 +1,10 @@
 import { MongoID } from "../database/mongoID"
 
+import { IComment } from "./comment"
+
 export interface IThread {
+    children?: IComment[]
     content: string
-    id?: MongoID
     title: string
     userId: MongoID
 }

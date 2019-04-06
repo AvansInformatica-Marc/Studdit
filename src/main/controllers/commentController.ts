@@ -1,14 +1,25 @@
-import { GetAll, Resource } from "@peregrine/webserver"
+import { Body, CreateItem, Json, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
 import { IComment } from "../models/comment"
 
+import { HttpAsyncReponse } from "./httpResponse"
+
 @Resource("comments")
 export class CommentController {
-    public constructor(public commentRepository: IRepository<IComment>) {}
+    protected static isComment(object: string | Json | null | undefined): object is IComment {
+        return (object !== null && typeof object === "object" && !Array.isArray(object) &&
+            object.content && object.parentId && object.userId) as boolean
+    }
 
-    @GetAll()
-    public async getAll(): Promise<IComment[]> {
-        return this.commentRepository.getAll()
+    public constructor(protected commentRepository: IRepository<IComment>) {}
+
+    @CreateItem()
+    public async createComment(@Body() comment: string | Json | null | undefined): HttpAsyncReponse<null> {
+        if (CommentController.isComment(comment)) {
+            await this.commentRepository.create(comment)
+        }
+
+        return null
     }
 }

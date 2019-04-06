@@ -1,8 +1,8 @@
 import { MongoID } from "../database/mongoID"
 
 export interface IComment {
+    children?: IComment[]
     content: string
-    id?: MongoID
     parentId: MongoID
     userId: MongoID
 }

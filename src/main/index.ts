@@ -17,8 +17,9 @@ const startDatabase = async () => {
 
 const startServer = async (dbConnection: MongoDBInstance) => {
     const server = new Server()
-    server.addController("/api/v1/", new ThreadController(new ThreadRepository(dbConnection)))
-    server.addController("/api/v1/", new CommentController(new CommentRepository(dbConnection)))
+    const commentRepository = new CommentRepository(dbConnection)
+    server.addController("/api/v1/", new ThreadController(new ThreadRepository(dbConnection), commentRepository))
+    server.addController("/api/v1/", new CommentController(commentRepository))
 
     return env.production ?
         server.startWithoutSecurity(env.port) :
