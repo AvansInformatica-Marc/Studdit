@@ -16,10 +16,8 @@ export class MongoDB {
                 useNewUrlParser: true,
             })
 
-            const instance = new MongoDB(mongoConnection.connection, connectionUri, dbName)
-
-            instance.connection
-                .once("open", () => { resolve(instance) })
+            mongoConnection.connection
+                .once("open", () => { resolve(new MongoDB(mongoConnection.connection, connectionUri, dbName)) })
                 .on("error", reject)
         })
     }

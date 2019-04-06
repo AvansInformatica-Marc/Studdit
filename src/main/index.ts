@@ -10,7 +10,7 @@ import { ThreadRepository } from "./repositories/threadRepository"
 const isProduction = process.env.PORT !== undefined
 
 if (!isProduction) {
-    require("dotenv")
+    require("dotenv").config()
 }
 
 const startDatabase = async (): Promise<MongoDB> => {
@@ -34,7 +34,8 @@ const startServer = async (dbConnection: MongoDB) => {
 // Run the app
 const main = async () => {
     const dbConnection = await startDatabase()
-    console.log(`Connected to MongoDB on ${dbConnection.connectionString}`)
+    const connectionString = dbConnection.connectionString.replace(process.env.MDB_PASSWORD as string, "******")
+    console.log(`Connected to MongoDB on ${connectionString}`)
 
     const connectionInfo = await startServer(dbConnection)
     console.log(`Server is running on https://localhost:${connectionInfo.port}/`)
