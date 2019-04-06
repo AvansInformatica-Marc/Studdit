@@ -38,6 +38,10 @@ export class MongoRepository<T> implements IRepository<T> {
         return this.replaceIds(MongoRepository.throwNotFoundIfNull(await this.mongoModel.findById(id)))
     }
 
+    public async hasModelWithId(id: string): Promise<boolean> {
+        return (await this.mongoModel.findById(id)) !== null
+    }
+
     public async update(id: string, model: T): Promise<T> {
         return this.replaceIds(MongoRepository.throwNotFoundIfNull(await this.mongoModel.findByIdAndUpdate(id, model)))
     }

@@ -20,8 +20,8 @@ export class ThreadController {
     }
 
     public constructor(
-        protected threadRepository: IRepository<Thread>,
-        protected commentRepository: IRepository<Comment>,
+        protected readonly threadRepository: IRepository<Thread>,
+        protected readonly commentRepository: IRepository<Comment>,
     ) {}
 
     @GetAll()
@@ -61,6 +61,7 @@ export class ThreadController {
                 code: 400,
                 body: {
                     errorName: "Bad Request",
+                    errorMessage: (error as Error).message,
                 },
             }
         }

@@ -2,11 +2,15 @@ import { Auth, Body, CreateItem, DeleteItem, ID, Resource } from "@peregrine/web
 
 import { IRepository } from "../database/repository"
 import { Comment } from "../models/comment"
+import { Thread } from "../models/thread"
 import { User } from "../models/user"
 
 @Resource("comments")
 export class CommentController {
-    public constructor(protected commentRepository: IRepository<Comment>) {}
+    public constructor(
+        protected readonly threadRepository: IRepository<Thread>,
+        protected readonly commentRepository: IRepository<Comment>,
+    ) {}
 
     @CreateItem()
     public async createComment(@Body() body: unknown, @Auth() user: null | User): Promise<Comment> {
@@ -22,12 +26,18 @@ export class CommentController {
         let comment
         try {
             comment = new Comment(body, user._id)
-            // TODO: Check if link exists
+            if (
+                !(await this.threadRepository.hasModelWithId(comment.parentId)) &&
+                !(await this.commentRepository.hasModelWithId(comment.parentId))
+            ) {
+                throw new Error("Parent thread/comment was not found")
+            }
         } catch (error) {
             throw {
                 code: 400,
                 body: {
                     errorName: "Bad Request",
+                    errorMessage: (error as Error).message,
                 },
             }
         }

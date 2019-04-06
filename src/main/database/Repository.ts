@@ -3,5 +3,6 @@ export interface IRepository<T, ID = string> {
     delete(id: ID): Promise<T>
     getAll(): Promise<T[]>
     getById(id: ID): Promise<T>
+    hasModelWithId(id: string): Promise<boolean>
     update(id: ID, model: T): Promise<T>
 }

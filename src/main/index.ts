@@ -35,14 +35,14 @@ const startServer = async (dbConnection: MongoDB) => {
         }
 
         const user = await userRepository.getById(request.headers.username as string)
-        if (user.password !== request.headers.password) {
+        if (user.password !== request.headers.password || !user.isActive) {
             return null
         }
 
         return user
     })
     apiEndpoint.addController(new ThreadController(threadRepository, commentRepository))
-    apiEndpoint.addController(new CommentController(commentRepository))
+    apiEndpoint.addController(new CommentController(threadRepository, commentRepository))
 
     return isProduction ?
         server.startWithoutSecurity(process.env.PORT) :

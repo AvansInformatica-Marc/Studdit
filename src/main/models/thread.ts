@@ -10,6 +10,8 @@ export class Thread {
     @ID()
     public _id?: string
 
+    public children?: Comment[]
+
     @Field(String) @Required()
     public content: string
 
@@ -25,7 +27,7 @@ export class Thread {
             this.title = object.title
             this.userId = customUserId !== undefined ? customUserId : object.userId
         } else {
-            throw new Error()
+            throw new Error("Invalid object")
         }
     }
 
@@ -35,6 +37,7 @@ export class Thread {
             content: this.content,
             title: this.title,
             userId: this.userId,
+            children: this.children !== undefined ? this.children : [],
         }
     }
 }

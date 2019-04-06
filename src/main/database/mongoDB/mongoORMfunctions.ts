@@ -32,10 +32,24 @@ export function ID() {
     }
 }
 
-export function Field(type: StringConstructor | Types.ObjectIdConstructor) {
+export function Field(type: StringConstructor | BooleanConstructor | Types.ObjectIdConstructor) {
     return (targetClass: JsonObject, fieldName: string) => {
         initField(targetClass, fieldName)
-        targetClass.__schema__[fieldName].type = type === String ? SchemaTypes.String : SchemaTypes.ObjectId
+        let mongoType
+        switch (type) {
+            case String:
+                mongoType = SchemaTypes.String
+                break
+            case Boolean:
+                mongoType = SchemaTypes.Boolean
+                break
+            case Types.ObjectId:
+                mongoType = SchemaTypes.ObjectId
+                break
+            default:
+                throw new Error("Type not supported")
+        }
+        targetClass.__schema__[fieldName].type = mongoType
     }
 }
 

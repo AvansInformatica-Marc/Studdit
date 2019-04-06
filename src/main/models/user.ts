@@ -14,6 +14,9 @@ export class User {
         return this._id
     }
 
+    @Field(Boolean) @Required()
+    public isActive: boolean
+
     @Field(String) @Required()
     public password: string
 
@@ -21,8 +24,9 @@ export class User {
         if (isJson(object) && object.username && object.password) {
             this._id = object.username
             this.password = object.password
+            this.isActive = object.isActive !== undefined ? object.isActive : true
         } else {
-            throw new Error()
+            throw new Error("Invalid object")
         }
     }
 
@@ -31,6 +35,7 @@ export class User {
             _id: this._id,
             username: this.username,
             password: this.password,
+            isActive: this.isActive,
         }
     }
 }
