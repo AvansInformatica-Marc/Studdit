@@ -1,14 +1,16 @@
 {
   "name": "studdit",
-  "version": "0.1.r0",
+  "version": "0.1.0",
   "description": "",
-  "main": "build/main/index.js",
+  "main": "app.js",
   "types": "build/main/index.d.ts",
   "private": true,
   "scripts": {
     "build": "tsc -b -v",
     "start": "node .",
-    "test": "mocha --recursive build/tests"
+    "test": "mocha --recursive build/tests",
+    "lint": "tslint -p . -c tslint.json",
+    "heroku-postbuild": "npm run-script build"
   },
   "keywords": [],
   "author": "Marc",
@@ -19,16 +21,19 @@
     "@peregrine/webserver": "^0.2.7",
     "axios": "^0.18.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.11"
+    "mongoose": "^5.4.22",
+    "neo4j-driver": "^1.7.3"
   },
   "devDependencies": {
-    "@types/node": "^10.12.24",
-    "@types/dotenv": "^6.1.0",
-    "@types/mongoose": "^5.3.12",
-    "typescript": "^3.3.3",
-    "mocha": "^5.2.0",
+    "@types/chai": "^4.1.7",
+    "@types/dotenv": "^6.1.1",
+    "@types/mocha": "^5.2.6",
+    "@types/mongoose": "^5.3.24",
+    "@types/node": "^11.13.0",
     "chai": "^4.2.0",
-    "@types/mocha": "^5.2.5",
-    "@types/chai": "^4.1.7"
+    "dotenv": "^7.0.0",
+    "mocha": "^6.0.2",
+    "tslint": "^5.15.0",
+    "typescript": "^3.4.2"
   }
 }

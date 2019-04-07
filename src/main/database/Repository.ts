@@ -1,9 +1,8 @@
-import { Entity } from "./Entity";
-
-export interface Repository<T, ID = string> {
-    getById(id: ID): Promise<Entity<T> | null>
-    getAll(): Promise<Entity<T>[]>
-    create(model: T): Promise<Entity<T>>
-    update(id: ID, model: T): Promise<Entity<T> | null> 
-    delete(id: ID): Promise<Entity<T> | null> 
+export interface IRepository<T, ID = string> {
+    create(model: T): Promise<T>
+    delete(id: ID): Promise<T | null>
+    getAll(): Promise<T[]>
+    getById(id: ID): Promise<T | null>
+    hasModelWithId(id: string): Promise<boolean>
+    update(id: ID, model: T): Promise<T | null>
 }
