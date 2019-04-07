@@ -12,6 +12,9 @@
     "lint": "tslint -p . -c tslint.json",
     "heroku-postbuild": "npm run-script build"
   },
+  "engines": {
+    "node": "10.15.2"
+  },
   "keywords": [],
   "author": "Marc",
   "license": "UNLICENSED",
