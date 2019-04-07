@@ -25,7 +25,7 @@ export class UserController {
         if (user === null || user._id !== id) {
             throw new http.Unauthorised401Error()
         }
-        
+
         if (typeof body !== "object" || body === null || typeof (body as JsonObject).password !== "string") {
             throw new http.BadRequest400Error("Invalid body")
         }
