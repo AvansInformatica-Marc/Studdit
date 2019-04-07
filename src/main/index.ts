@@ -44,9 +44,11 @@ const startServer = async (dbConnection: MongoDB) => {
     apiEndpoint.addController(new ThreadController(threadRepository, commentRepository))
     apiEndpoint.addController(new CommentController(threadRepository, commentRepository))
 
-    return isProduction ?
-        server.startWithoutSecurity(process.env.PORT) :
-        server.start(new File("assets/localhost.key"), new File("assets/localhost.crt"), process.env.PORT)
+    /* if (!isProduction) {
+        return server.start(new File("assets/localhost.key"), new File("assets/localhost.crt"), process.env.PORT)
+    } */
+
+    return server.startWithoutSecurity(process.env.PORT)
 }
 
 // Run the app

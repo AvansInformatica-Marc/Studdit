@@ -23,10 +23,10 @@ export function Entity(name: string) {
 
 export function ID() {
     return (targetClass: JsonObject, fieldName: string) => {
-        initField(targetClass, fieldName)
         if (fieldName === "_id") {
             targetClass.__pk__ = fieldName
         } else {
+            initField(targetClass, fieldName)
             targetClass.__schema__[fieldName].type = SchemaTypes.ObjectId
         }
     }

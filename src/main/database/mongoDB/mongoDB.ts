@@ -1,3 +1,4 @@
+import { JsonObject } from "@peregrine/webserver"
 import mongoose from "mongoose"
 
 import { MongoRepository } from "./mongoRepository"
@@ -42,11 +43,15 @@ export class MongoDB {
         public readonly databaseName: string,
     ) {}
 
-    public createRepository<T>(object: { prototype: T }): MongoRepository<T> {
+    public createRepository<T extends object>(object: { prototype: T }): MongoRepository<T> {
         return new MongoRepository<T>(object, this)
     }
 
     public model<T>(name: string, schema: mongoose.SchemaDefinition): mongoose.Model<T & mongoose.Document> {
+        if (schema._id !== undefined){
+            schema._id = (schema._id as JsonObject).type
+        }
+
         return this.connection.model(name, new mongoose.Schema(schema), name)
     }
 }
