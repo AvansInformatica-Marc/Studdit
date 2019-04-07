@@ -20,7 +20,7 @@ describe("UserController", () => {
     it("createUser throws a bad request error when an invalid body was passed", async () => {
         // Arrange
         const fakeRepo = { create: (user: User) => user } as unknown as IRepository<User>
-        const controller = new UserController(fakeRepo)
+        const controller = new UserController(fakeRepo, { run: async () => {} })
         const expectedErrorType = http.BadRequest400Error
 
         // Act
@@ -43,7 +43,7 @@ describe("UserController", () => {
             password: "testPassword",
         }
         const fakeRepo = { create: (user: User) => user } as unknown as IRepository<User>
-        const controller = new UserController(fakeRepo)
+        const controller = new UserController(fakeRepo, { run: async () => {} })
 
         // Act
         const result = await controller.createUser(user)
@@ -65,7 +65,7 @@ describe("UserController", () => {
             update: (id: string, u: User) => u,
             getById: (id: string) => user,
         } as unknown as IRepository<User>
-        const controller = new UserController(fakeRepo)
+        const controller = new UserController(fakeRepo, { run: async () => {} })
         const expectedErrorType = http.Unauthorised401Error
 
         // Act
@@ -85,7 +85,7 @@ describe("UserController", () => {
             update: (id: string, u: User) => u,
             getById: (id: string) => user,
         } as unknown as IRepository<User>
-        const controller = new UserController(fakeRepo)
+        const controller = new UserController(fakeRepo, { run: async () => {} })
         const expectedErrorType = http.BadRequest400Error
 
         // Act

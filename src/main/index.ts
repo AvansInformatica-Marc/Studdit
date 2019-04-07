@@ -2,13 +2,15 @@ import { File } from "@peregrine/filesystem"
 import { Server } from "@peregrine/webserver"
 
 import { CommentController } from "./controllers/commentController"
+import { FriendshipController } from "./controllers/friendshipController"
 import { ThreadController } from "./controllers/threadController"
+import { UserController } from "./controllers/userController"
 import { MongoDB } from "./database/mongoDB/mongoDB"
 import { MongoRepository } from "./database/mongoDB/mongoRepository"
+import { Neo4J } from "./database/neo4j/neo4jDB"
 import { Comment } from "./models/comment"
 import { Thread } from "./models/thread"
 import { User } from "./models/user"
-import { UserController } from "./controllers/userController";
 
 const isProduction = process.env.PORT !== undefined
 
@@ -16,14 +18,19 @@ if (!isProduction) {
     require("dotenv").config()
 }
 
-const startDatabase = async (): Promise<MongoDB> => {
+const startMongoDatabase = async (): Promise<MongoDB> => {
     const connectionString = MongoDB.createConnectionString(
         process.env.MDB_HOST, null, "SRV", process.env.MDB_USER, process.env.MDB_PASSWORD)
 
     return MongoDB.connect("studdit", connectionString, true)
 }
 
-const startServer = async (dbConnection: MongoDB) => {
+const startNeo4j = (): Neo4J => new Neo4J(
+    process.env.NEO_CONNECTIONSTRING as string,
+    [process.env.NEO_USER as string, process.env.NEO_PASSWORD as string],
+)
+
+const startServer = async (dbConnection: MongoDB, neo4jConnection: Neo4J) => {
     const commentRepository = new MongoRepository(Comment, dbConnection)
     const threadRepository = new MongoRepository(Thread, dbConnection)
     const userRepository = new MongoRepository(User, dbConnection)
@@ -44,22 +51,29 @@ const startServer = async (dbConnection: MongoDB) => {
     })
     apiEndpoint.addController(new ThreadController(threadRepository, commentRepository))
     apiEndpoint.addController(new CommentController(threadRepository, commentRepository))
-    apiEndpoint.addController(new UserController(userRepository))
+    apiEndpoint.addController(new UserController(userRepository, neo4jConnection))
+    apiEndpoint.addController(new FriendshipController(neo4jConnection))
 
-    /* if (!isProduction) {
+    if (!isProduction && process.env.PORT === "443") {
         return server.start(new File("assets/localhost.key"), new File("assets/localhost.crt"), process.env.PORT)
-    } */
+    }
 
     return server.startWithoutSecurity(process.env.PORT)
 }
 
+let neo4jDatabase: Neo4J
+let mongoDatabase: MongoDB
+
 // Run the app
 const main = async () => {
-    const dbConnection = await startDatabase()
-    const connectionString = dbConnection.connectionString.replace(process.env.MDB_PASSWORD as string, "******")
+    mongoDatabase = await startMongoDatabase()
+    const connectionString = mongoDatabase.connectionString.replace(process.env.MDB_PASSWORD as string, "******")
     console.log(`Connected to MongoDB on ${connectionString}`)
 
-    const connectionInfo = await startServer(dbConnection)
+    neo4jDatabase = startNeo4j()
+    console.log(`Connected to Neo4j on ${neo4jDatabase.connectionString}`)
+
+    const connectionInfo = await startServer(mongoDatabase, neo4jDatabase)
     console.log(`Server is running on https://localhost:${connectionInfo.port}/`)
 }
 
@@ -67,3 +81,9 @@ main()
     .catch(error => {
         console.error(error)
     })
+
+process.on("SIGTERM", async () => {
+    console.log("Closing database connections")
+    neo4jDatabase.closeConnection()
+    await mongoDatabase.closeConnection()
+})

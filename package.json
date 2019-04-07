@@ -20,7 +20,8 @@
     "@peregrine/webserver": "^0.2.7",
     "axios": "^0.18.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.4.22"
+    "mongoose": "^5.4.22",
+    "neo4j-driver": "^1.7.3"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",

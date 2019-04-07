@@ -1,12 +1,16 @@
 import { http } from "@peregrine/exceptions"
-import { Auth, Body, CreateItem, DeleteItem, ID, Resource, UpdateItem, JsonObject } from "@peregrine/webserver"
+import { Auth, Body, CreateItem, DeleteItem, ID, JsonObject, Resource, UpdateItem } from "@peregrine/webserver"
 
+import { IGraphDB } from "../database/graphDB"
 import { IRepository } from "../database/repository"
 import { User } from "../models/user"
 
 @Resource("users")
 export class UserController {
-    public constructor(protected readonly userRepository: IRepository<User>) {}
+    public constructor(
+        protected readonly userRepository: IRepository<User>,
+        protected readonly friendshipDB: IGraphDB<any>,
+    ) {}
 
     @CreateItem()
     public async createUser(@Body() body: unknown): Promise<User> {
@@ -14,10 +18,14 @@ export class UserController {
         try {
             user = new User(body)
 
-            return this.userRepository.create(user)
+            user = await this.userRepository.create(user)
         } catch (error) {
             throw new http.BadRequest400Error(error instanceof Error ? error.message : undefined)
         }
+
+        await this.friendshipDB.run("CREATE (a:User {name: $username}) RETURN a", { username: user._id })
+
+        return user
     }
 
     @UpdateItem()

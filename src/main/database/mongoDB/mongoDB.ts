@@ -44,6 +44,10 @@ export class MongoDB {
         public readonly databaseName: string,
     ) {}
 
+    public async closeConnection() {
+        await this.connection.close()
+    }
+
     public createRepository<T extends object>(object: IConstructor<T>): MongoRepository<T> {
         return new MongoRepository<T>(object, this)
     }

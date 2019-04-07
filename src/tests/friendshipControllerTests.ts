@@ -17,11 +17,11 @@ const returnError = async <T>(f: Promise<T>) => {
 describe("FriendshipController", () => {
     it("addFriend throws an unauthorised error when not authenticated", async () => {
         // Arrange
-        const controller = new FriendshipController()
+        const controller = new FriendshipController({ run: async () => {} })
         const expectedErrorType = http.Unauthorised401Error
 
         // Act
-        const error = await returnError(controller.addFriend("abc", "def", null))
+        const error = await returnError(controller.addFriend("abcd", null))
 
         // Assert
         error.should.be.an.instanceOf(expectedErrorType)
@@ -29,11 +29,11 @@ describe("FriendshipController", () => {
 
     it("removeFriend throws an unauthorised error when not authenticated", async () => {
         // Arrange
-        const controller = new FriendshipController()
+        const controller = new FriendshipController({ run: async () => {} })
         const expectedErrorType = http.Unauthorised401Error
 
         // Act
-        const error = await returnError(controller.removeFriend("abc", "def", null))
+        const error = await returnError(controller.removeFriend("abcd", null))
 
         // Assert
         error.should.be.an.instanceOf(expectedErrorType)
