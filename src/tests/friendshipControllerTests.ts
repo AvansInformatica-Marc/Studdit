@@ -17,7 +17,7 @@ const returnError = async <T>(f: Promise<T>) => {
 describe("FriendshipController", () => {
     it("addFriend throws an unauthorised error when not authenticated", async () => {
         // Arrange
-        const controller = new FriendshipController({ run: async () => {} })
+        const controller = new FriendshipController({ run: async () => [] })
         const expectedErrorType = http.Unauthorised401Error
 
         // Act
@@ -29,7 +29,7 @@ describe("FriendshipController", () => {
 
     it("removeFriend throws an unauthorised error when not authenticated", async () => {
         // Arrange
-        const controller = new FriendshipController({ run: async () => {} })
+        const controller = new FriendshipController({ run: async () => [] })
         const expectedErrorType = http.Unauthorised401Error
 
         // Act

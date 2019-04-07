@@ -82,8 +82,26 @@ main()
         console.error(error)
     })
 
-process.on("SIGTERM", async () => {
+process.on("exit", async () => {
+    process.stdin.resume()
     console.log("Closing database connections")
     neo4jDatabase.closeConnection()
     await mongoDatabase.closeConnection()
+    process.exit(2)
+})
+
+process.on("SIGINT", async () => {
+    process.stdin.resume()
+    console.log("Closing database connections")
+    neo4jDatabase.closeConnection()
+    await mongoDatabase.closeConnection()
+    process.exit(2)
+})
+
+process.on("SIGTERM", async () => {
+    process.stdin.resume()
+    console.log("Closing database connections")
+    neo4jDatabase.closeConnection()
+    await mongoDatabase.closeConnection()
+    process.exit(2)
 })
