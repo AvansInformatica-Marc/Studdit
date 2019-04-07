@@ -30,7 +30,7 @@ export class CommentController {
 
             return this.commentRepository.create(comment)
         } catch (error) {
-            throw new http.BadRequest400Error((error as Error).message)
+            throw new http.BadRequest400Error(error instanceof Error ? error.message : undefined)
         }
     }
 

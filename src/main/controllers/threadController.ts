@@ -55,7 +55,7 @@ export class ThreadController {
 
             return this.threadRepository.create(thread)
         } catch (error) {
-            throw new http.BadRequest400Error((error as Error).message)
+            throw new http.BadRequest400Error(error instanceof Error ? error.message : undefined)
         }
     }
 

@@ -9,7 +9,7 @@ const isJson = (thing: unknown): thing is JsonObject =>
 @Entity("user")
 export class User {
     @Field(String) @Required() @Unique()
-    public _id?: string
+    public _id: string
 
     public get username() {
         return this._id
