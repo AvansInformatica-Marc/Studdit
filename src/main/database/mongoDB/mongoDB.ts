@@ -2,6 +2,7 @@ import { JsonObject } from "@peregrine/webserver"
 import mongoose from "mongoose"
 
 import { MongoRepository } from "./mongoRepository"
+import { IConstructor } from "../../constructorType";
 
 mongoose.Promise = global.Promise
 
@@ -43,7 +44,7 @@ export class MongoDB {
         public readonly databaseName: string,
     ) {}
 
-    public createRepository<T extends object>(object: { prototype: T }): MongoRepository<T> {
+    public createRepository<T extends object>(object: IConstructor<T>): MongoRepository<T> {
         return new MongoRepository<T>(object, this)
     }
 

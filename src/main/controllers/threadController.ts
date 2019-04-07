@@ -1,3 +1,4 @@
+import { http } from "@peregrine/exceptions"
 import { Auth, Body, CreateItem, GetAll, GetItem, ID, JsonObject, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
@@ -35,7 +36,7 @@ export class ThreadController {
         try {
             thread = await this.threadRepository.getById(id)
         } catch (error) {
-            throw { code: 422 }
+            throw new http.BadRequest400Error("Error 422 invalid ID")
         }
         (thread as JsonObject).children = ThreadController.getNestedComments(id, await this.commentRepository.getAll())
 
@@ -45,25 +46,14 @@ export class ThreadController {
     @CreateItem()
     public async createThread(@Body() body: unknown, @Auth() user: null | User): Promise<Thread> {
         if (user === null) {
-            throw {
-                code: 401,
-                body: {
-                    errorName: "Unauthorised",
-                },
-            }
+            throw new http.Unauthorised401Error()
         }
 
         let thread
         try {
             thread = new Thread(body, user._id)
         } catch (error) {
-            throw {
-                code: 400,
-                body: {
-                    errorName: "Bad Request",
-                    errorMessage: (error as Error).message,
-                },
-            }
+            throw new http.BadRequest400Error((error as Error).message)
         }
 
         return this.threadRepository.create(thread)

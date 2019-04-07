@@ -8,6 +8,7 @@ import { MongoRepository } from "./database/mongoDB/mongoRepository"
 import { Comment } from "./models/comment"
 import { Thread } from "./models/thread"
 import { User } from "./models/user"
+import { UserController } from "./controllers/userController";
 
 const isProduction = process.env.PORT !== undefined
 
@@ -43,6 +44,7 @@ const startServer = async (dbConnection: MongoDB) => {
     })
     apiEndpoint.addController(new ThreadController(threadRepository, commentRepository))
     apiEndpoint.addController(new CommentController(threadRepository, commentRepository))
+    apiEndpoint.addController(new UserController(userRepository))
 
     /* if (!isProduction) {
         return server.start(new File("assets/localhost.key"), new File("assets/localhost.crt"), process.env.PORT)

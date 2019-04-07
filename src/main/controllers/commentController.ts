@@ -1,3 +1,4 @@
+import { http } from "@peregrine/exceptions"
 import { Auth, Body, CreateItem, DeleteItem, ID, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
@@ -15,12 +16,7 @@ export class CommentController {
     @CreateItem()
     public async createComment(@Body() body: unknown, @Auth() user: null | User): Promise<Comment> {
         if (user === null) {
-            throw {
-                code: 401,
-                body: {
-                    errorName: "Unauthorised",
-                },
-            }
+            throw new http.Unauthorised401Error()
         }
 
         let comment
@@ -33,13 +29,7 @@ export class CommentController {
                 throw new Error("Parent thread/comment was not found")
             }
         } catch (error) {
-            throw {
-                code: 400,
-                body: {
-                    errorName: "Bad Request",
-                    errorMessage: (error as Error).message,
-                },
-            }
+            throw new http.BadRequest400Error((error as Error).message)
         }
 
         return this.commentRepository.create(comment)
@@ -50,12 +40,7 @@ export class CommentController {
         const comment = await this.commentRepository.getById(id)
 
         if (user === null || comment.userId !== user._id) {
-            throw {
-                code: 401,
-                body: {
-                    errorName: "Unauthorised",
-                },
-            }
+            throw new http.Unauthorised401Error()
         }
         comment.content = "[DELETED]"
         await this.commentRepository.update(id, comment)

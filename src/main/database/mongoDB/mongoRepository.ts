@@ -1,9 +1,10 @@
 import { JsonObject } from "@peregrine/webserver"
-import mongoose, { Document, Model, SchemaTypes, Types } from "mongoose"
+import { Document, Model, SchemaTypes, Types } from "mongoose"
 
 import { IRepository } from "../repository"
 
 import { MongoDB } from "./mongoDB"
+import { IConstructor } from "../../constructorType";
 
 export class MongoRepository<T extends object> implements IRepository<T> {
     protected static throwNotFoundIfNull<P>(model: P | null): P {
@@ -17,7 +18,7 @@ export class MongoRepository<T extends object> implements IRepository<T> {
     protected readonly mongoModel: Model<T & Document>
     protected readonly obj: T & { __entityName__: string; __pk__?: string; __schema__: JsonObject }
 
-    public constructor(protected readonly entityType: { prototype: T }, instance: MongoDB) {
+    public constructor(protected readonly entityType: IConstructor<T>, instance: MongoDB) {
         this.obj = entityType.prototype as T & { __entityName__: string; __pk__?: string; __schema__: JsonObject }
         this.mongoModel = instance.model(this.obj.__entityName__, this.obj.__schema__)
     }
@@ -66,12 +67,6 @@ export class MongoRepository<T extends object> implements IRepository<T> {
             m[this.obj.__pk__] = (m[this.obj.__pk__] as Types.ObjectId).toHexString()
         }
 
-        const newModel = Object.create(this.entityType.prototype) as JsonObject
-        for (const i of Object.keys(m)) {
-            newModel[i] = m[i]
-        }
-
-        return newModel as T
-        // Old: return Object.setPrototypeOf(m, this.entityType.prototype) as T
+        return new (this.entityType)(m)
     }
 }

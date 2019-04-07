@@ -1,5 +1,6 @@
 import { JsonObject } from "@peregrine/webserver"
 import { SchemaTypes, Types } from "mongoose"
+import { IConstructor } from "../../constructorType";
 
 function initField(targetClass: JsonObject, fieldName: string) {
     if (targetClass.__schema__ === undefined) {
@@ -16,7 +17,7 @@ function initField(targetClass: JsonObject, fieldName: string) {
 }
 
 export function Entity(name: string) {
-    return (target: { prototype: JsonObject }) => {
+    return (target: IConstructor<any>) => {
         target.prototype.__entityName__ = name
     }
 }

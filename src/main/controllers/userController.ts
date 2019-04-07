@@ -1,3 +1,4 @@
+import { http } from "@peregrine/exceptions"
 import { Auth, Body, CreateItem, DeleteItem, ID, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
@@ -13,13 +14,7 @@ export class UserController {
         try {
             user = new User(body)
         } catch (error) {
-            throw {
-                code: 400,
-                body: {
-                    errorName: "Bad Request",
-                    errorMessage: (error as Error).message,
-                },
-            }
+            throw new http.BadRequest400Error((error as Error).message)
         }
 
         return this.userRepository.create(user)
@@ -28,12 +23,7 @@ export class UserController {
     @DeleteItem()
     public async deleteUser(@ID() id: string, @Auth() user: null | User): Promise<object> {
         if (user === null || user._id !== id) {
-            throw {
-                code: 401,
-                body: {
-                    errorName: "Unauthorised",
-                },
-            }
+            throw new http.Unauthorised401Error()
         }
 
         const userObject = await this.userRepository.getById(id)
