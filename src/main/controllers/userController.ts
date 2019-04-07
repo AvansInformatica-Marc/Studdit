@@ -25,13 +25,14 @@ export class UserController {
         if (user === null || user._id !== id) {
             throw new http.Unauthorised401Error()
         }
+        
+        if (typeof body !== "object" || body === null || typeof (body as JsonObject).password !== "string") {
+            throw new http.BadRequest400Error("Invalid body")
+        }
 
         const userObject = await this.userRepository.getById(id)
         if (userObject === null) {
             throw new http.NotFound404Error("Error 422 invalid ID")
-        }
-        if (typeof body !== "object" || body === null || typeof (body as JsonObject).password !== "string") {
-            throw new http.BadRequest400Error()
         }
         userObject.password = (body as JsonObject).password as string
         await this.userRepository.update(id, userObject)
