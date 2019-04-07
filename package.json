@@ -9,7 +9,8 @@
     "build": "tsc -b -v",
     "start": "node .",
     "test": "mocha --recursive build/tests",
-    "lint": "tslint -p . -c tslint.json"
+    "lint": "tslint -p . -c tslint.json",
+    "heroku-postbuild": "npm run-script build"
   },
   "keywords": [],
   "author": "Marc",
