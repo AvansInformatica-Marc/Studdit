@@ -5,6 +5,7 @@ import { IRepository } from "../repository"
 
 import { MongoDB } from "./mongoDB"
 import { IConstructor } from "../../constructorType";
+import { Exception } from "@peregrine/exceptions";
 
 export class MongoRepository<T extends object> implements IRepository<T> {
     protected static throwNotFoundIfNull<P>(model: P | null): P {
@@ -59,11 +60,11 @@ export class MongoRepository<T extends object> implements IRepository<T> {
         const m = model as JsonObject
         const schema = this.obj.__schema__
         for (const field in schema) {
-            if (schema[field].type === SchemaTypes.ObjectId) {
+            if (typeof schema[field] === "object" && schema[field].type !== undefined && schema[field].type === SchemaTypes.ObjectId) {
                 m[field] = (m[field] as Types.ObjectId).toHexString()
             }
         }
-        if (this.obj.__pk__ !== undefined) {
+        if (this.obj.__pk__ !== undefined && typeof m[this.obj.__pk__] === "object") {
             m[this.obj.__pk__] = (m[this.obj.__pk__] as Types.ObjectId).toHexString()
         }
 

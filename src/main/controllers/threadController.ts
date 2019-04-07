@@ -13,9 +13,9 @@ export class ThreadController {
         allComments: Comment[],
     ): Comment[] {
         const comments = allComments.filter(comment => comment.parentId === parentId)
-        for (const comment of comments) {
-            (comment as JsonObject).children = ThreadController.getNestedComments(comment._id, allComments)
-        }
+        comments.forEach(comment => {
+            comment.children = ThreadController.getNestedComments(comment._id, allComments)
+        })
 
         return comments
     }
@@ -38,7 +38,7 @@ export class ThreadController {
         } catch (error) {
             throw new http.BadRequest400Error("Error 422 invalid ID")
         }
-        (thread as JsonObject).children = ThreadController.getNestedComments(id, await this.commentRepository.getAll())
+        thread.children = ThreadController.getNestedComments(id, await this.commentRepository.getAll())
 
         return thread
     }

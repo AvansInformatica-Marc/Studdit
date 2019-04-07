@@ -1,6 +1,7 @@
+import { Exception } from "@peregrine/exceptions"
 import { JsonObject } from "@peregrine/webserver"
 
-import { Entity, Field, ID, Required, Unique } from "../database/mongoDB/mongoORMfunctions"
+import { Entity, Field, Required, Unique } from "../database/mongoDB/mongoORMfunctions"
 
 const isJson = (thing: unknown): thing is JsonObject =>
     thing !== null && typeof thing === "object" && !Array.isArray(thing)
@@ -21,12 +22,12 @@ export class User {
     public password: string
 
     public constructor(object: unknown) {
-        if (isJson(object) && object.username && object.password) {
-            this._id = object.username
+        if (isJson(object) && (object.username || object._id) && object.password) {
+            this._id = object.username || object._id
             this.password = object.password
             this.isActive = object.isActive !== undefined ? object.isActive : true
         } else {
-            throw new Error("Invalid object")
+            throw new Exception("Invalid object")
         }
     }
 
