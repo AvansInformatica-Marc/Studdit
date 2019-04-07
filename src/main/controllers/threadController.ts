@@ -1,5 +1,5 @@
 import { http } from "@peregrine/exceptions"
-import { Auth, Body, CreateItem, GetAll, GetItem, ID, Resource } from "@peregrine/webserver"
+import { Auth, Body, CreateItem, GetAll, GetItem, ID, JsonObject, Resource, UpdateItem } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
 import { Comment } from "../models/comment"
@@ -54,5 +54,28 @@ export class ThreadController {
         }
 
         return this.threadRepository.create(thread)
+    }
+
+    @UpdateItem()
+    public async updateContent(@ID() id: string, @Body() body: unknown, @Auth() user: null | User): Promise<Thread> {
+        if (user === null) {
+            throw new http.Unauthorised401Error()
+        }
+
+        if (typeof body !== "object" || body === null || typeof (body as JsonObject).content !== "string") {
+            throw new http.BadRequest400Error("Invalid body")
+        }
+
+        const thread = await this.threadRepository.getById(id)
+        if (thread === null) {
+            throw new http.NotFound404Error("Error 422 invalid ID")
+        }
+        if (user._id !== thread.userId) {
+            throw new http.Unauthorised401Error()
+        }
+        thread.content = (body as JsonObject).content as string
+        await this.threadRepository.update(id, thread)
+
+        return thread
     }
 }
