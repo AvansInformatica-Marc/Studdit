@@ -22,17 +22,16 @@ export class CommentController {
         let comment
         try {
             comment = new Comment(body, user._id)
-            if (
-                !(await this.threadRepository.hasModelWithId(comment.parentId)) &&
-                !(await this.commentRepository.hasModelWithId(comment.parentId))
-            ) {
+
+            if (!(await this.threadRepository.hasModelWithId(comment.parentId)) &&
+                !(await this.commentRepository.hasModelWithId(comment.parentId))) {
                 throw new Error("Parent thread/comment was not found")
             }
+
+            return this.commentRepository.create(comment)
         } catch (error) {
             throw new http.BadRequest400Error((error as Error).message)
         }
-
-        return this.commentRepository.create(comment)
     }
 
     @DeleteItem()

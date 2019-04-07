@@ -13,11 +13,11 @@ export class UserController {
         let user
         try {
             user = new User(body)
+
+            return this.userRepository.create(user)
         } catch (error) {
             throw new http.BadRequest400Error((error as Error).message)
         }
-
-        return this.userRepository.create(user)
     }
 
     @UpdateItem()

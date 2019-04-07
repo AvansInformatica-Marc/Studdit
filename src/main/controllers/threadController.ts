@@ -52,11 +52,11 @@ export class ThreadController {
         let thread
         try {
             thread = new Thread(body, user._id)
+
+            return this.threadRepository.create(thread)
         } catch (error) {
             throw new http.BadRequest400Error((error as Error).message)
         }
-
-        return this.threadRepository.create(thread)
     }
 
     @UpdateItem()
