@@ -1,5 +1,5 @@
 import { http } from "@peregrine/exceptions"
-import { Auth, Body, CreateItem, GetAll, GetItem, ID, JsonObject, Resource } from "@peregrine/webserver"
+import { Auth, Body, CreateItem, GetAll, GetItem, ID, Resource } from "@peregrine/webserver"
 
 import { IRepository } from "../database/repository"
 import { Comment } from "../models/comment"
@@ -8,13 +8,12 @@ import { User } from "../models/user"
 
 @Resource("threads")
 export class ThreadController {
-    protected static getNestedComments(
-        parentId: string | undefined,
-        allComments: Comment[],
-    ): Comment[] {
+    protected static getNestedComments(parentId: string, allComments: Comment[]): Comment[] {
         const comments = allComments.filter(comment => comment.parentId === parentId)
         comments.forEach(comment => {
-            comment.children = ThreadController.getNestedComments(comment._id, allComments)
+            if (comment._id !== undefined) {
+                comment.children = ThreadController.getNestedComments(comment._id, allComments)
+            }
         })
 
         return comments
@@ -32,13 +31,11 @@ export class ThreadController {
 
     @GetItem()
     public async getItem(@ID() id: string): Promise<Thread> {
-        let thread
-        try {
-            thread = await this.threadRepository.getById(id)
-        } catch (error) {
-            throw new http.BadRequest400Error("Error 422 invalid ID")
+        const thread = await this.threadRepository.getById(id)
+        if (thread === null) {
+            throw new http.NotFound404Error("Error 422 invalid ID")
         }
-        thread.children = ThreadController.getNestedComments(id, await this.commentRepository.getAll())
+        thread.children = ThreadController.getNestedComments(thread._id || id, await this.commentRepository.getAll())
 
         return thread
     }

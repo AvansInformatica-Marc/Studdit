@@ -36,7 +36,7 @@ const startServer = async (dbConnection: MongoDB) => {
         }
 
         const user = await userRepository.getById(request.headers.username as string)
-        if (user.password !== request.headers.password || !user.isActive) {
+        if (user === null || user.password !== request.headers.password || !user.isActive) {
             return null
         }
 

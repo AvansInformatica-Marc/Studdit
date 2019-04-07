@@ -43,7 +43,7 @@ export class Thread {
             content: this.content,
             title: this.title,
             userId: this.userId,
-            children: this.children !== undefined ? this.children.map(child => child.toJSON()) : [],
+            children: this.children !== undefined ? this.children.map(child => child.toJSON()) : undefined,
         }
     }
 }

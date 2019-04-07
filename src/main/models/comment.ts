@@ -41,7 +41,7 @@ export class Comment {
             content: this.content,
             parentId: this.parentId,
             userId: this.userId,
-            children: this.children !== undefined ? this.children.map(child => child.toJSON()) : [],
+            children: this.children !== undefined ? this.children.map(child => child.toJSON()) : undefined,
         }
     }
 }

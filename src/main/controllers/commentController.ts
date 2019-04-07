@@ -36,15 +36,18 @@ export class CommentController {
     }
 
     @DeleteItem()
-    public async deleteComment(@ID() id: string, @Auth() user: null | User): Promise<object> {
+    public async deleteComment(@ID() id: string, @Auth() user: null | User): Promise<Comment> {
         const comment = await this.commentRepository.getById(id)
 
+        if (comment === null) {
+            throw new http.NotFound404Error("Error 422 invalid ID")
+        }
         if (user === null || comment.userId !== user._id) {
             throw new http.Unauthorised401Error()
         }
         comment.content = "[DELETED]"
         await this.commentRepository.update(id, comment)
 
-        return {}
+        return comment
     }
 }
